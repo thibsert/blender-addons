@@ -6,32 +6,20 @@ bl_info = {
 import bpy
 
 class OriginToSelection(bpy.types.Operator):
-    """Set the object's origin to the selection"""      # Use this as a tooltip for menu items and buttons.
-    bl_idname = "object.origin_to_selection"        # Unique identifier for buttons and menu items to reference.
-    bl_label = "Set Origin to Selection"         # Display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # Enable undo for the operator.
+    """Set the object's origin to the selection"""
+    bl_idname = "object.origin_to_selection"
+    bl_label = "Set Origin to Selection"
+    bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):        # execute() is called when running the operator.
+    def execute(self, context):
 
 
-        for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                ctx = bpy.context.copy()
-                ctx['area'] = area
-                ctx['region'] = area.regions[-1]
-                bpy.ops.view3d.snap_cursor_to_selected(ctx)
-                bpy.ops.object.editmode_toggle(ctx)
-                bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-                
-                # take new copy of the context because it is outdated now
-                ctx = bpy.context.copy()
-                ctx['area'] = area
-                ctx['region'] = area.regions[-1]            
+        bpy.ops.view3d.snap_cursor_to_selected()
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+        bpy.ops.object.editmode_toggle()
 
-                bpy.ops.object.editmode_toggle(ctx)
-
-                break
-        return {'FINISHED'} # Lets Blender know the operator finished successfully.
+        return {'FINISHED'}
 
 def register():
     bpy.utils.register_class(OriginToSelection)
